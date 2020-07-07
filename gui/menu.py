@@ -6,6 +6,7 @@ sys.path.append("..")
 from conecta4.services.constants import *
 from conecta4.services.sprite import Sprite
 from conecta4.utils import is_overlap
+from pygame import mixer
 
 class Menu:
     # E: Una referencia a pygame
@@ -19,6 +20,10 @@ class Menu:
         os.environ['SDL_VIDEO_CENTERED'] = '1'
 
         icon = pygame.image.load(GAME_LOGO_PATH)
+
+        mixer.music.load(GAME_BACKGROUND_MUSIC)
+        mixer.music.set_volume(0.15)
+        mixer.music.play(-1)
 
         self._background = pygame.image.load(MENU_BACKGROUND_PATH)
         
