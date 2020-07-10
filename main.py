@@ -9,3 +9,4 @@ pygame.mixer.init()
 menu = Menu(pygame)
 
 menu.start_game()
+

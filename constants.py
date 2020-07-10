@@ -10,6 +10,10 @@ GAME_LOGO_PATH = "src/logo.png"
 GAME_FONT_PATH = "src/8bitFont.TTF"
 GAME_BACKGROUND_MUSIC = "src/bg_music.mp3"
 GAME_BACKGROUND = "src/background.png"
+GAME_BUTTON_PRESSED = "src/menu_transition.wav"
+
+COIN_A_PATH = "src/coin_a.png"
+COIN_DROP_SOUND = "src/coin_drop.ogg"
 
 COLOR_WHITE = (255, 255, 255)
 COLOR_BLUE = (0, 0, 255)
