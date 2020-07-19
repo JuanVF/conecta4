@@ -8,14 +8,14 @@ def is_overlap(pos1, pos2, pos3):
 
     return False
 
-# E: Una referencia a Pygame y un string
+# E: Una referencia a Pygame, un string y dos enteros
 # S: N/A
 # D: Dado el path de un sonido, lo reproduce
-def play_sound_effect(pygame, sound_path):
+def play_sound_effect(pygame, sound_path, chn, volume=0.3):
     pygame.mixer.init()
     sound = pygame.mixer.Sound(sound_path)
-    sound.set_volume(0.3)
-    pygame.mixer.Channel(1).play(sound)
+    sound.set_volume(volume)
+    pygame.mixer.Channel(chn).play(sound)
 
 # E: Una referecia a pygame y un Sprite
 # S: Un booleano

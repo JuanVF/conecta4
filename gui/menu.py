@@ -25,7 +25,7 @@ class Menu:
         icon = pygame.image.load(GAME_LOGO_PATH)
 
         mixer.music.load(GAME_BACKGROUND_MUSIC)
-        mixer.music.set_volume(0.15)
+        mixer.music.set_volume(0.10)
         mixer.music.play(-1)
 
         self.__background = pygame.image.load(MENU_BACKGROUND_PATH)
@@ -231,7 +231,7 @@ class Menu:
         for i in range(0, len(buttons)):
 
             if is_sprite_pressed(self.__pygame, buttons[i]) and self.__click:
-                play_sound_effect(self.__pygame, GAME_BUTTON_PRESSED)
+                play_sound_effect(self.__pygame, GAME_BUTTON_PRESSED, 1)
 
                 if i == 0:
                     # TODO: Pedir nombres a los usuarios

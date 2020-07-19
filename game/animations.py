@@ -6,14 +6,14 @@ sys.path.append("..")
 from conecta4.game.physics import calc_velocity
 from conecta4.game.sprite import Sprite
 
-# E: Una referencia a screen, pygame y un sprite
+# E: Una referencia a screen, una moneda y dos numeros reales
 # S: N/A
 # D: Hace la animacion de dejar caer la moneda
-def drop_coin(screen, coin, start_time):
+def drop_coin(screen, coin, start_time, lim):
     screen.blit(coin.get_image(), (coin.x, coin.y))
 
-    if coin.y >= 500:
-        coin.y = 500
+    if coin.y >= lim:
+        coin.y = lim
         return
 
     now = time.time()
