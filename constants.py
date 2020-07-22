@@ -12,6 +12,8 @@ GAME_BACKGROUND_MUSIC = "src/bg_music.mp3"
 GAME_BACKGROUND = "src/background.png"
 GAME_BUTTON_PRESSED = "src/menu_transition.wav"
 GAME_KEYS_PATH = "src/teclas.png"
+GAME_WIN_SOUND = "src/winner (1).ogg"
+GAME_WIN_IMG = "src/winner.png"
 
 COIN_A_PATH = "src/coin_a.png"
 COIN_B_PATH = "src/coin_b.png"

@@ -31,19 +31,32 @@ def add_n_board_cols(board, n, left):
 # D: Dada una posiion y el turno, agrega una nueva moneda
 def add_coin_to_board(board, pos, player_turn):
     coins = get_pos_last_space(board[pos])
-
-    if coins == len(board[pos]):
-        if player_turn:
-            board[pos].append(2)
-        else:
-            board[pos].append(1)
-    else:
-        if player_turn:
-            board[pos][coins] = 2
-        else:
-            board[pos][coins] = 1
     
+    if len(board[pos]) == coins:
+        for i in range(0, len(board)):
+            board[i].append(0)
+            board[i].append(0)
+
+    if player_turn:
+        board[pos][coins] = 2
+    else:
+        board[pos][coins] = 1
+
     return board
+
+# E: Una matriz
+# S: Un entero
+# D: Dado una matriz, retorna el mas alto
+def get_highest_coin(board):
+    highest = 0
+
+    for i in range(0, len(board)):
+        current = get_pos_last_space(board[i])
+
+        if highest < current:
+            highest = current
+        
+    return highest
 
 # E: Un sprite, un entero y una matriz
 # S: Un sprite
@@ -69,7 +82,8 @@ def calc_coin_y_lim(col):
     
     pos = get_pos_last_space(col) + 1
 
-    lim = 600 - (coin_height+coin_y_distance)*pos
+    lim = 600 - (coin_height + coin_y_distance) * pos
+
     return lim
 
 # E: Un vector
@@ -95,6 +109,24 @@ def move_coins_x_pos(coins, left):
             coins[i][0].x -= x_move
         else:
             coins[i][0].x += x_move
+
+    return coins
+
+# E/S: Una lista y un booleano
+# D: Se encarga de mover la posiion y de render de las monedas
+#    Si left es True las mueve haia la izquierda, de lo contrario, haia la derecha
+def move_coins_y_pos(coins, up):
+    coin_y_distance = 20
+    coin_width = 75
+    y_move = coin_y_distance + coin_width
+
+    for i in range(0, len(coins)):
+        if up:
+            coins[i][0].y += y_move
+            coins[i][2] += y_move
+        else:
+            coins[i][0].y -= y_move
+            coins[i][2] -= y_move
 
     return coins
 
@@ -138,7 +170,7 @@ def detect_line(board, cod, i, j):
 
         cond = (cod == 4 and (i-1 < 0 or j-1 < 0))
 
-        if len(board) == nI or len(board[j]) == nJ or cond:
+        if len(board) == nI or len(board[0]) == nJ or cond:
             n = -1
         else:
             # Derecha

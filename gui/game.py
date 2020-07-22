@@ -20,7 +20,7 @@ class Game:
         self.__player2 = player2
         self.__game_running = True
         self.__winner = 0
-        self.__winner_sound = pygame.mixer.Sound("src/winner (1).ogg")
+        self.__winner_sound = pygame.mixer.Sound(GAME_WIN_SOUND)
         self.__winner_sound.set_volume(1.15)
         self.__winner_sound_played = False
 
@@ -36,6 +36,8 @@ class Game:
         self.__blLim = 0
         self.__brLim = 6
         self.__lRender = 0
+        self.__dRender = 0
+        self.__upLimit = 0
         self.__player_turn = False
         self.__first_try = True
         
@@ -61,13 +63,13 @@ class Game:
         while self.__game_running:
             self.__set_background()
 
-            self.__render_game_menu_buttons()
-            self.__render_menu_text()
+            render_game_menu_buttons(self.__game_menu_buttons, self.__screen)
+            render_menu_text(self.__pygame, self.__screen)
+
             self.__screen.blit(self.__keys_img, (25 ,260))
             self.__click = False
 
             self.__winner = detect_winner(self.__board)
-
             
             for event in self.__pygame.event.get():
                 self.__close_menu(event)
@@ -78,11 +80,12 @@ class Game:
             
             self.__button_events()
 
-            self.__render_coins()
+            render_coins(self.__screen, self.__coins)
             
             if self.__winner != 0:
-                self.__render_winner()
-
+                self.__winner_sound_played = render_winner(self.__pygame, self.__screen, self.__winner_sound, self.__winner_sound_played)
+                render_winner_text(self.__pygame, self.__screen, self.__winner, self.__player1, self.__player2)
+                
             self.__pygame.display.update()
             self.__game_clock.tick(60)
 
@@ -96,45 +99,6 @@ class Game:
         buttons.append(Sprite(button_img, 20, 120, 0, 0))
 
         self.__game_menu_buttons = buttons
-
-    # E/S: N/A
-    # D: Renderiza los botones del menu
-    def __render_game_menu_buttons(self):
-        for button in self.__game_menu_buttons:
-            self.__screen.blit(button.get_image(),(button.x, button.y))
-
-    def __render_winner(self):
-        # TODO: Refactorizador todo esto
-        s = self.__pygame.Surface((800,600))
-
-        s.set_alpha(128)
-        s.fill((0,0,0))
-        self.__screen.blit(s, (200,0)) 
-
-        font = self.__pygame.font.Font(GAME_FONT_PATH, 22)
-        txt = Sprite(font.render("Ganador Jugador: ", True, COLOR_WHITE), 370, 450, 0, 0)
-        self.__screen.blit(txt.get_image(), (txt.x, txt.y))
-        winner = self.__pygame.image.load("src/winner.png")
-        self.__screen.blit(winner, (370,200))
-
-        if not self.__winner_sound_played:
-            self.__pygame.mixer.init()
-            self.__pygame.mixer.Channel(1).play(self.__winner_sound)
-
-            self.__winner_sound_played = True
-
-    # E/S: N/A
-    # D: Se encarga de asignarle un texto a los botones
-    def __render_menu_text(self):
-        font = self.__pygame.font.Font(GAME_FONT_PATH, 17)
-
-        texts = []
-        texts.append(Sprite(font.render("Volver", True, COLOR_WHITE), 42, 45, 0, 0))
-        texts.append(Sprite(font.render("Guardar", True, COLOR_WHITE), 38, 145, 0, 0))
-        texts.append(Sprite(font.render("Teclas", True, COLOR_WHITE), 48, 230, 0, 0))
-
-        for text in texts:
-            self.__screen.blit(text.get_image(), (text.x, text.y))
 
     # E: Una referencia a un evento de Pygame
     # S: N/A
@@ -190,11 +154,14 @@ class Game:
                 self.__lRender -= 1
 
             if event.key == self.__pygame.K_w:
-                pprint(self.__board)
-                print("w")
-                
+                if self.__dRender <= self.__upLimit:
+                    self.__coins = move_coins_y_pos(self.__coins, True)
+                    self.__dRender += 1
             if event.key == self.__pygame.K_s:
-                print("s")
+                if self.__dRender >= 1:
+                    self.__coins = move_coins_y_pos(self.__coins, False)
+                    self.__dRender -= 1
+
 
     # E: Una referencia a un evento de Pygame
     # S: N/A
@@ -245,6 +212,7 @@ class Game:
         self.__coins.append([coin, now, lim ])
         
         self.__modifyCoinLimits(pos)
+        self.__upLimit = get_highest_coin(self.__board)
 
     # E: Un entero
     # S: N/A
@@ -278,9 +246,3 @@ class Game:
             self.__board = add_n_board_cols(self.__board, right_excess, False) 
 
             self.__brLim += right_excess
-
-    # E/S: N/A
-    # D: Se encarga de renderizar las monedas
-    def __render_coins(self):
-        for coin in self.__coins:
-            drop_coin(self.__screen, coin[0], coin[1], coin[2])
