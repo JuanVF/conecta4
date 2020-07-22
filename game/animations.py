@@ -3,7 +3,39 @@ from conecta4.game.physics import calc_velocity
 from conecta4.constants import *
 
 import time
-import sys
+
+# E: Una referencia a pygame y screen, y un entero
+# S: N/A
+# D: Se encarga de renderizar los indices en x
+def render_indices(pygame, screen, lRender, dRender):
+    font = pygame.font.Font(GAME_FONT2_PATH, 15)
+    x_dis = 270
+    y_dis = 520
+
+    for i in range(0, 7):
+        txt_x = font.render(str(lRender + i), True, COLOR_WHITE)
+
+        if i < 6:
+            txt_y = font.render(str(dRender + i), True, COLOR_WHITE)
+            screen.blit(txt_y, (220, y_dis))
+
+            y_dis -= 95
+
+        screen.blit(txt_x, (x_dis, 560))
+        x_dis += 110
+
+# E: Una referencia a pygame, screen, un entero y dos strings
+# S: N/A
+# D: Renderiza el texto del ganador
+def render_winner_text(pygame, screen, winner, player1, player2):
+    font = pygame.font.Font(GAME_FONT_PATH, 22)
+    if winner == 1:
+        txt = "Ganador Jugador " + player1
+    else:
+        txt = "Ganador Jugador " + player2
+
+    txt_r = Sprite(font.render(txt, True, COLOR_WHITE), 370, 450, 0, 0)
+    screen.blit(txt_r.get_image(), (txt_r.x, txt_r.y))
 
 # E: Una referencia a screen, una moneda y dos numeros reales
 # S: N/A
@@ -46,19 +78,6 @@ def render_winner(pygame, screen, winner_sound, winner_sound_played):
         pygame.mixer.Channel(1).play(winner_sound)
 
     return True
-
-# E: Una referencia a pygame, screen, un entero y dos strings
-# S: N/A
-# D: Renderiza el texto del ganador
-def render_winner_text(pygame, screen, winner, player1, player2):
-    font = pygame.font.Font(GAME_FONT_PATH, 22)
-    if winner == 1:
-        txt = "Ganador Jugador " + player1
-    else:
-        txt = "Ganador Jugador " + player2
-
-    txt_r = Sprite(font.render(txt, True, COLOR_WHITE), 370, 450, 0, 0)
-    screen.blit(txt_r.get_image(), (txt_r.x, txt_r.y))
 
 # E/S: N/A
 # D: Se encarga de asignarle un texto a los botones

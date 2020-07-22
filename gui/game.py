@@ -65,6 +65,7 @@ class Game:
 
             render_game_menu_buttons(self.__game_menu_buttons, self.__screen)
             render_menu_text(self.__pygame, self.__screen)
+            render_indices(self.__pygame, self.__screen, self.__lRender, self.__dRender)
 
             self.__screen.blit(self.__keys_img, (25 ,260))
             self.__click = False

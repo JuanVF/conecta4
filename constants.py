@@ -8,6 +8,7 @@ BUTTON_XL_IMG_PATH = "src/button_xl.png"
 
 GAME_LOGO_PATH = "src/logo.png"
 GAME_FONT_PATH = "src/8bitFont.TTF"
+GAME_FONT2_PATH = "src/Pixeled.ttf"
 GAME_BACKGROUND_MUSIC = "src/bg_music.mp3"
 GAME_BACKGROUND = "src/background.png"
 GAME_BUTTON_PRESSED = "src/menu_transition.wav"
