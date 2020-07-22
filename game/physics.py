@@ -148,7 +148,7 @@ def detect_winner(board):
 # D: Retorna True si encuentra ganador
 def detect_lines(board, i, j):
     for code in range(1, 5):
-        case = detect_line(board, code, i, j)
+        case,_ = detect_line(board, code, i, j)
 
         if case:
             return True
@@ -197,4 +197,4 @@ def detect_line(board, cod, i, j):
             
             n += 1
 
-    return nxt == 4
+    return nxt == 4, nxt

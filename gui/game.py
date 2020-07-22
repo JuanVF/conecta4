@@ -9,15 +9,18 @@ from conecta4.game.sprite import Sprite
 from conecta4.utils import *
 from conecta4.game.animations import *
 from conecta4.game.physics import *
+from conecta4.game.pc import *
 
 class Game:
     
     # E: Una referencia a Pygame, dos strings, un booleano (opcional)
     # S: N/A
     # D: Constructor de la clase e inicializa variables
-    def __init__(self, pygame, screen, clock, player1, player2, isIA=False):
+    def __init__(self, pygame, screen, clock, player1, player2, isIA=True):
         self.__player1 = player1
         self.__player2 = player2
+        self.__isIa = isIA
+
         self.__game_running = True
         self.__winner = 0
         self.__winner_sound = pygame.mixer.Sound(GAME_WIN_SOUND)
@@ -40,9 +43,6 @@ class Game:
         self.__upLimit = 0
         self.__player_turn = False
         self.__first_try = True
-        
-        # No multiplique las listas porque me daba errores de direccion de memoria
-        # Pasa que todas las listas tenian la misma direccion en memoria
         self.__board = [[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0], [0,0,0,0,0,0]]
         self.__coins = []
 
@@ -135,7 +135,13 @@ class Game:
     # D: Detecta y activa los eventos del juego
     def __detect_game_events(self, event):
         self.__board_events(event)
-        self.__player_events(event)
+
+        if self.__isIa and self.__player_turn:
+            ia_turn = predict_movement(self.__board)
+
+            self.__throw_coin(ia_turn)
+        else:
+            self.__player_events(event)
 
     # E: Una referencia a un evento de Pygame
     # S: N/A
@@ -154,40 +160,41 @@ class Game:
                 self.__lRender -= 1
 
             if event.key == self.__pygame.K_w:
-                if self.__dRender <= self.__upLimit:
+                if self.__dRender + 1 < self.__upLimit:
                     self.__coins = move_coins_y_pos(self.__coins, True)
                     self.__dRender += 1
+
             if event.key == self.__pygame.K_s:
                 if self.__dRender >= 1:
                     self.__coins = move_coins_y_pos(self.__coins, False)
                     self.__dRender -= 1
-
 
     # E: Una referencia a un evento de Pygame
     # S: N/A
     # D: Detecta y activa los eventos para tirar fichas
     def __player_events(self, event):
         if event.type == self.__pygame.KEYDOWN:
+            pos = self.__lRender + abs(self.__blLim)
             if event.key == self.__pygame.K_1 or event.key == self.__pygame.K_KP1:
-                self.__throw_coin(self.__lRender)
+                self.__throw_coin(pos)
             
             if event.key == self.__pygame.K_2 or event.key == self.__pygame.K_KP2:
-                self.__throw_coin(self.__lRender + 1)
+                self.__throw_coin(pos + 1)
                 
             if event.key == self.__pygame.K_3 or event.key == self.__pygame.K_KP3:
-                self.__throw_coin(self.__lRender + 2)
+                self.__throw_coin(pos + 2)
                 
             if event.key == self.__pygame.K_4 or event.key == self.__pygame.K_KP4:
-                self.__throw_coin(self.__lRender + 3)
+                self.__throw_coin(pos + 3)
 
             if event.key == self.__pygame.K_5 or event.key == self.__pygame.K_KP5:
-                self.__throw_coin(self.__lRender + 4)
+                self.__throw_coin(pos + 4)
                 
             if event.key == self.__pygame.K_6 or event.key == self.__pygame.K_KP6:
-                self.__throw_coin(self.__lRender + 5)
+                self.__throw_coin(pos + 5)
 
             if event.key == self.__pygame.K_7 or event.key == self.__pygame.K_KP7:
-                self.__throw_coin(self.__lRender + 6)
+                self.__throw_coin(pos + 6)
     
     # E: Un entero
     # S: N/A
@@ -198,11 +205,11 @@ class Game:
         else:
             coin = Sprite(self.__coin_a, 0, 0, 0, 0)
 
-        coin = calc_coin_initial_pos(coin, pos - self.__lRender)
+        coin = calc_coin_initial_pos(coin, (pos - abs(self.__blLim)) - self.__lRender)
 
-        lim = calc_coin_y_lim(self.__board[pos + abs(self.__blLim)])
+        lim = calc_coin_y_lim(self.__board[pos])
 
-        self.__board = add_coin_to_board(self.__board, pos + abs(self.__blLim), self.__player_turn)
+        self.__board = add_coin_to_board(self.__board, pos, self.__player_turn)
         now = time.time()
 
         play_sound_effect(self.__pygame, COIN_DROP_SOUND, 1)

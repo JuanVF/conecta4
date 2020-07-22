@@ -1,3 +1,5 @@
+from os import path
+
 # E: Una lista de tuplas
 # S: Un booleano
 # D: Detecta si hay traslape
@@ -45,3 +47,29 @@ def detect_click(pygame, event):
 # D: Dado un x retorna su valor en la funcion F(x)=2x-500
 def retro_menu_rect(x):
     return (2*x - 500)
+
+# E: Dos strings
+# S: Booleano
+# D: Guarda los datos de un string sobre un archivo
+def save(path, string):
+    try:
+        file = open(path, 'w')
+        file.write(string)
+        file.close()
+    except:
+        return False
+    return True
+
+# E/S: Un string
+# D: Dada la ubicacion de un archivo, lo lee y retorna sus datos
+def read(path):
+    datos = ""
+    try:
+        file = open(path, 'r')
+
+        datos = file.read()
+
+        file.close()
+        return datos
+    except:
+        return datos
