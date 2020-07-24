@@ -170,9 +170,7 @@ def detect_line(board, cod, i, j):
 
         cond = (cod == 4 and (i-1 < 0 or j-1 < 0))
 
-        if len(board) == nI or len(board[0]) == nJ or cond:
-            n = -1
-        else:
+        try:
             # Derecha
             if cod == 1 and board[i][j] == board[nI][j]:
                 nxt += 1
@@ -196,5 +194,7 @@ def detect_line(board, cod, i, j):
                 j -= 1
             
             n += 1
+        except:
+            n = -1
 
     return nxt == 4, nxt

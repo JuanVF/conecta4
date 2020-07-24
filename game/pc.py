@@ -27,16 +27,19 @@ def get_possible_movements(board):
 
     for i in range(0, len(board)):
         for j in range(0, len(board[0])):
-            if board[i][j] == 1:
-                highest_i = find_line(board, i, j, 1)
+            try:
+                if board[i][j] == 1:
+                    highest_i = find_line(board, i, j, 1)
 
-                for code in range(2, 8):
-                    case = find_line(board, i, j, code)
+                    for code in range(2, 8):
+                        case = find_line(board, i, j, code)
 
-                    if case[0] > highest_i[0]:
-                        highest_i = case
-    
-                pos_wins.append(highest_i)
+                        if case[0] > highest_i[0]:
+                            highest_i = case
+        
+                    pos_wins.append(highest_i)
+            except:
+                print(i, j)
 
     pos_wins.sort()
 
@@ -118,10 +121,3 @@ def find_line(board, i, j, cod):
             n += 1
     
     return [nxt, [i, j]]
-
-# E/S: Una lista
-# D: Ordena la lista de wins
-def sort_wins(wins):
-    sort = [wins[0]]
-    
-    return sort

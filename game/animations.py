@@ -98,3 +98,13 @@ def render_menu_text(pygame, screen):
 def render_coins(screen, coins):
     for coin in coins:
         drop_coin(screen, coin[0], coin[1], coin[2])
+
+# E: Una referencia a pygame y a screen
+# S: N/A
+# D: Se encarga de ocultar las monedas desplazadas hacia la izquierda
+def render_coin_hider(pygame, screen):
+    s = pygame.Surface((200, 600))
+
+    s.set_alpha(255)
+    s.fill((0, 0, 0))
+    screen.blit(s, (0, 0))

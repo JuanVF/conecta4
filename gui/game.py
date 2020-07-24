@@ -1,6 +1,5 @@
 import sys
-import time 
-from pprint import pprint
+import time
 
 sys.path.append("..")
 
@@ -13,12 +12,15 @@ from conecta4.game.pc import *
 
 class Game:
     
-    # E: Una referencia a Pygame, dos strings, un booleano (opcional)
+    # E: Una referencia a Pygame, dos strings, un booleano (opcional) y un diccionario opcional
     # S: N/A
     # D: Constructor de la clase e inicializa variables
-    def __init__(self, pygame, screen, clock, player1, player2, isIA=True):
+    def __init__(self, pygame, screen, clock, player1, player2, isIA=False, prev_game={}):
         self.__player1 = player1
-        self.__player2 = player2
+        if isIA:
+            self.__player2 = "PC"
+        else:
+            self.__player2 = player2
         self.__isIa = isIA
 
         self.__game_running = True
@@ -63,11 +65,8 @@ class Game:
         while self.__game_running:
             self.__set_background()
 
-            render_game_menu_buttons(self.__game_menu_buttons, self.__screen)
-            render_menu_text(self.__pygame, self.__screen)
             render_indices(self.__pygame, self.__screen, self.__lRender, self.__dRender)
 
-            self.__screen.blit(self.__keys_img, (25 ,260))
             self.__click = False
 
             self.__winner = detect_winner(self.__board)
@@ -82,6 +81,11 @@ class Game:
             self.__button_events()
 
             render_coins(self.__screen, self.__coins)
+            render_coin_hider(self.__pygame, self.__screen)
+            
+            render_game_menu_buttons(self.__game_menu_buttons, self.__screen)
+            render_menu_text(self.__pygame, self.__screen)
+            self.__screen.blit(self.__keys_img, (25 ,260))
             
             if self.__winner != 0:
                 self.__winner_sound_played = render_winner(self.__pygame, self.__screen, self.__winner_sound, self.__winner_sound_played)
@@ -219,9 +223,9 @@ class Game:
         self.__player_turn = not self.__player_turn
         self.__coins.append([coin, now, lim ])
         
-        self.__modifyCoinLimits(pos)
+        self.__modifyCoinLimits(pos - abs(self.__blLim))
         self.__upLimit = get_highest_coin(self.__board)
-
+    
     # E: Un entero
     # S: N/A
     # D: Se encarga de determinar los extremos de columnas donde se tiraron monedas
@@ -247,7 +251,6 @@ class Game:
             self.__board = add_n_board_cols(self.__board, left_excess, True)
 
             self.__blLim -= left_excess
-
         elif pos > self.__rLim:
             self.__rLim = pos
 

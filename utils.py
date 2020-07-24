@@ -22,11 +22,11 @@ def play_sound_effect(pygame, sound_path, chn, volume=0.3):
 # E: Una referecia a pygame y un Sprite
 # S: Un booleano
 # D: Si el mouse dio click sobre un boton retorna True
-def is_sprite_pressed(pygame, button):
+def is_sprite_pressed(pygame, button, x=200, y =70):
     mx, my = pygame.mouse.get_pos()
 
     pos1 = (button.x, button.y)
-    pos2 = (button.x + 200, button.y + 70)
+    pos2 = (button.x + x, button.y + y)
     pos3 = (mx, my)
 
     overlap = is_overlap(pos1, pos2, pos3)

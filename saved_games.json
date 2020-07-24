@@ -1,0 +1,97 @@
+{
+  "PV1": [
+    {
+      "player1": "P1",
+      "player2": "PC",
+      "lLim": 99,
+      "rLim": -99,
+      "blLim": 0,
+      "brLim": 6,
+      "lRender": 0,
+      "dRender": 0,
+      "upLimit": 0,
+      "playerTurn": False,
+      "first_try": True,
+      "board": [
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0]
+      ],
+      "coins":[]
+    },
+    {
+      "player1": "Juan Fletes",
+      "player2": "PC",
+      "lLim": 99,
+      "rLim": -99,
+      "blLim": 0,
+      "brLim": 6,
+      "lRender": 0,
+      "dRender": 0,
+      "upLimit": 0,
+      "playerTurn": False,
+      "first_try": True,
+      "board": [
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0]
+      ],
+      "coins":[]
+    },
+    {
+      "player1": "Chayanne",
+      "player2": "PC",
+      "lLim": 99,
+      "rLim": -99,
+      "blLim": 0,
+      "brLim": 6,
+      "lRender": 0,
+      "dRender": 0,
+      "upLimit": 0,
+      "playerTurn": False,
+      "first_try": True,
+      "board": [
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0]
+      ],
+      "coins":[]
+    },
+    {
+      "player1": "Diego Miramometes",
+      "player2": "PC",
+      "lLim": 99,
+      "rLim": -99,
+      "blLim": 0,
+      "brLim": 6,
+      "lRender": 0,
+      "dRender": 0,
+      "upLimit": 0,
+      "playerTurn": False,
+      "first_try": True,
+      "board": [
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0]
+      ],
+      "coins":[]
+    }
+  ],
+  "PVP": []
+}

@@ -15,6 +15,12 @@ GAME_BUTTON_PRESSED = "src/menu_transition.wav"
 GAME_KEYS_PATH = "src/teclas.png"
 GAME_WIN_SOUND = "src/winner (1).ogg"
 GAME_WIN_IMG = "src/winner.png"
+GAME_BACK_BUTTON = "src/back_button.png"
+GAME_SAVE_CONTAINER = "src/saved_game_container.png"
+GAME_MOVE_LEFT = "src/move_left.png"
+GAME_MOVE_RIGHT = "src/move_right.png"
+
+INPUT_IMG = "src/input.png"
 
 COIN_A_PATH = "src/coin_a.png"
 COIN_B_PATH = "src/coin_b.png"
@@ -23,3 +29,5 @@ COIN_DROP_SOUND = "src/coin_drop.ogg"
 COLOR_WHITE = (255, 255, 255)
 COLOR_BLUE = (0, 0, 255)
 COLOR_RED = (255, 0, 0)
+
+SAVED_GAMES = "saved_games.json"

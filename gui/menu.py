@@ -7,6 +7,7 @@ from conecta4.constants import *
 from conecta4.game.sprite import Sprite
 from conecta4.utils import *
 from conecta4.gui.game import Game
+from conecta4.gui.options import Options
 from pygame import mixer
 
 class Menu:
@@ -234,13 +235,14 @@ class Menu:
                 play_sound_effect(self.__pygame, GAME_BUTTON_PRESSED, 1)
 
                 if i == 0:
-                    # TODO: Pedir nombres a los usuarios
-                    game = Game(self.__pygame, self.__screen, self.__main_clock,"Juan", "Gerald")
-                    game.start_game_mode()
+                    opts = Options(self.__pygame, self.__screen, self.__main_clock, False)
+
+                    opts.start_options()
 
                 elif i == 1:
-                    print("Juego contra IA")
-                    pass
+                    opts = Options(self.__pygame, self.__screen, self.__main_clock, True)
+                    
+                    opts.start_options()
 
                 elif i == 2:
                     print("Puntajes")
