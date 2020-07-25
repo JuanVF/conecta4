@@ -31,3 +31,8 @@ COLOR_BLUE = (0, 0, 255)
 COLOR_RED = (255, 0, 0)
 
 SAVED_GAMES = "saved_games.json"
+
+SCORE_BACKGROUND = "src/score_background.png"
+SCORE_FILE = "scores.json"
+
+SCROLL_BUTTON = "src/scroll_button.png"

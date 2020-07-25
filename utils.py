@@ -103,9 +103,75 @@ def find_game_by_id(mode, game_id):
 # E: Un string, dos diccionarios y una id
 # S: Un booleano
 # D: Actualiza una partida por su id
-def update_game_by_id(mode, games, game, id):
+def update_game_by_id(mode, games, game, game_id):
     for i in range(0, len(games[mode])):
-        if games[mode][i]["id"] == id:
+        if games[mode][i]["id"] == game_id:
             games[mode][i] = game
     
     return save(SAVED_GAMES, str(games))
+
+# E: Un entero y un string
+# S: Un booleano
+# D: Borra una partida guardada por su id
+def delete_game_by_id(game_id, mode):
+    saved_games = eval(read(SAVED_GAMES))
+    new_games = []
+
+    for i in range(0, len(saved_games[mode])):
+        if saved_games[mode][i]["id"] != game_id:
+            new_games.append(saved_games[mode][i])
+    
+    saved_games[mode] = new_games
+
+    return save(SAVED_GAMES, str(saved_games))
+
+# E: N/A
+# S: Una lista
+# D: Retorna todos los scores guardados
+def find_scores():
+    scores = read(SCORE_FILE)
+
+    if scores == "":
+        return []
+    
+    return eval(scores)
+
+# E: Un string
+# S: Un booleano
+# D: Actualiza la tabla de puntajes
+def update_scores(player):
+    scores = find_scores()
+    isIn = False
+
+    for i in range(0, len(scores)):
+        if scores[i]["player"] == player:
+            scores[i]["points"] += 1
+            isIn = True
+    
+    if not isIn:
+        scores.append({"player":player, "points":1})
+    
+    return save(SCORE_FILE, str(scores))
+    
+
+# E/S: Una lista
+# D: Ordena una lista por el metodo iterativo, mayor a menor
+def sort_scores(scores):
+    for i in range(0, len(scores)-1):
+        mini = i
+
+        for j in range(i+1, len(scores)):
+            if scores[j]["points"] < scores[mini]["points"]:
+                mini = j
+            
+            scores[i], scores[mini] = scores[mini], scores[i]
+    
+    return scores[::-1]
+            
+# E: Un booleano
+# S: Un string
+# D: Retorna el modo de juego
+def get_game_mode(isIa):
+    if isIa:
+        return "PV1"
+    return "PVP"

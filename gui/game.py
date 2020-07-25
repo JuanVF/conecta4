@@ -32,7 +32,7 @@ class Game:
         self.__winner = 0
         self.__winner_sound = pygame.mixer.Sound(GAME_WIN_SOUND)
         self.__winner_sound.set_volume(1.15)
-        self.__winner_sound_played = False
+        self.__winner_loop_passed = False
 
         self.__game_clock = clock
         self.__background = pygame.image.load(GAME_BACKGROUND)
@@ -176,9 +176,19 @@ class Game:
             self.__screen.blit(self.__keys_img, (25 ,260))
             
             if self.__winner != 0:
-                self.__winner_sound_played = render_winner(self.__pygame, self.__screen, self.__winner_sound, self.__winner_sound_played)
+                if not self.__winner_loop_passed and self.__winner == 1:
+                    update_scores(self.__player1)
+                elif not self.__winner_loop_passed and self.__winner == 2:
+                    update_scores(self.__player2)
+
+                if not self.__winner_loop_passed and len(self.__prev_game) != 0:
+                    mode = get_game_mode(self.__isIa)
+                    delete_game_by_id(self.__id, mode)
+
+                self.__winner_loop_passed = render_winner(self.__pygame, self.__screen, self.__winner_sound, self.__winner_loop_passed)
                 render_winner_text(self.__pygame, self.__screen, self.__winner, self.__player1, self.__player2)
                 
+
             self.__pygame.display.update()
             self.__game_clock.tick(60)
 
@@ -207,8 +217,9 @@ class Game:
                     self.__game_running = False
 
                 elif i == 1:
-                    self.__save_current_game()
-
+                    if self.__winner == 0:
+                        self.__save_current_game()
+    
     # E/S: N/A
     # D: Asigna el fondo
     def __set_background(self):

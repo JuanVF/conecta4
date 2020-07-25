@@ -7,6 +7,7 @@ from conecta4.constants import *
 from conecta4.game.sprite import Sprite
 from conecta4.utils import *
 from conecta4.gui.options import Options
+from conecta4.gui.scores import Score
 from pygame import mixer
 
 class Menu:
@@ -244,8 +245,9 @@ class Menu:
                     opts.start_options()
 
                 elif i == 2:
-                    print("Puntajes")
-                    pass
+                    score = Score(self.__pygame, self.__screen, self.__main_clock)
+
+                    score.open_scores()
                 
                 elif i == 3:
                     self.__pygame.quit()
