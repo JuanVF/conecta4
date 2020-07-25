@@ -1,12 +1,10 @@
+from conecta4.utils import *
+from conecta4.constants import *
+from conecta4.game.sprite import Sprite
 import sys
-import os  
+import os
 import time
 
-sys.path.append("..")
-
-from conecta4.game.sprite import Sprite
-from conecta4.constants import *
-from conecta4.utils import *
 
 class Input:
 
@@ -30,12 +28,15 @@ class Input:
     # E/S: N/A
     # D: Se encarga de renderizar el input
     def render(self):
-        self.__screen.blit(self.__sprite.get_image(), (self.__sprite.x, self.__sprite.y))
+        self.__screen.blit(self.__sprite.get_image(),
+                           (self.__sprite.x, self.__sprite.y))
 
         if self.__text != "":
-            self.__screen.blit(self.__input.get_image().render(self.__text, True, COLOR_WHITE), (self.__input.x, self.__input.y))
+            self.__screen.blit(self.__input.get_image().render(
+                self.__text, True, COLOR_WHITE), (self.__input.x, self.__input.y))
         elif not self.__is_active:
-            self.__screen.blit(self.__input.get_image().render(self.__hint, True, (174, 174, 174)), (self.__input.x, self.__input.y))
+            self.__screen.blit(self.__input.get_image().render(
+                self.__hint, True, (174, 174, 174)), (self.__input.x, self.__input.y))
 
         if self.__is_active:
             self.__animate_cursor()
@@ -51,9 +52,11 @@ class Input:
         time_since = time.time() * 1000.0 - self.__cursor_time
 
         if time_since <= 500:
-            self.__pygame.draw.line(self.__screen, COLOR_WHITE, start_pos, end_pos, 3)
+            self.__pygame.draw.line(
+                self.__screen, COLOR_WHITE, start_pos, end_pos, 3)
         elif 500 < time_since and time_since <= 1000:
-            self.__pygame.draw.line(self.__screen, (0,0,0), start_pos, end_pos, 3)
+            self.__pygame.draw.line(
+                self.__screen, (0, 0, 0), start_pos, end_pos, 3)
         else:
             self.__cursor_time = time.time() * 1000
 
@@ -71,8 +74,9 @@ class Input:
     # D: Detecta cuando un usuario escribe y a la vez mueve el cursor
     def __detect_keyboard(self, event):
         if event.type == self.__pygame.KEYDOWN:
-            valid_ascii = event.unicode.isalpha() or event.unicode.isnumeric() or event.key == self.__pygame.K_SPACE
-            
+            valid_ascii = event.unicode.isalpha() or event.unicode.isnumeric(
+            ) or event.key == self.__pygame.K_SPACE
+
             if event.key == self.__pygame.K_RETURN:
                 self.__is_active = False
 
@@ -98,7 +102,7 @@ class Input:
 
         if click:
             self.__toggle_status(is_overlap(pos1, pos2, pos3))
-    
+
     # E: N/A
     # S: Un string
     # D: Retorna el texto del input

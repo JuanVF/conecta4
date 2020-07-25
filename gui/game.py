@@ -1,15 +1,13 @@
 import sys
 import time
 
-sys.path.append("..")
-
 from conecta4.constants import *
+from conecta4.game.animations import *
+from conecta4.game.pc import *
+from conecta4.game.physics import *
 from conecta4.game.sprite import Sprite
 from conecta4.utils import *
-from conecta4.game.animations import *
-from conecta4.game.physics import *
-from conecta4.game.pc import *
-from conecta4.events.game_events import * 
+
 
 class Game:
     
@@ -18,12 +16,11 @@ class Game:
     # D: Constructor de la clase e inicializa variables
     def __init__(self, pygame, screen, clock, player1, player2, isIA=False, prev_game={}):
         self.__player1 = player1
-        if isIA:
-            self.__player2 = "PC"
-            self.__id = get_latest_id("PV1")
-        else:
-            self.__player2 = player2
-            self.__id = get_latest_id("PVP")
+        self.__player2 = player2
+        
+        mode = get_game_mode(isIA)
+
+        self.__id = get_latest_id(mode)
 
         self.__isIa = isIA
         self.__prev_game = prev_game
@@ -39,6 +36,12 @@ class Game:
         self.__keys_img = pygame.image.load(GAME_KEYS_PATH)
         self.__screen = screen
         self.__pygame = pygame
+
+        self.__font = pygame.font.Font(GAME_FONT_PATH, 15)
+        
+        self.__turn_text = self.__font.render("Turno", True, COLOR_WHITE)
+        self.__p1_turn_text = self.__font.render(player1, True, COLOR_WHITE)
+        self.__p2_turn_text = self.__font.render(player2, True, COLOR_WHITE)
 
         # En el primer intento el rLim nunca va ser menor que -99 y el lLim mayor que 99 
         self.__lLim = 99
@@ -62,80 +65,6 @@ class Game:
         self.__load_prev_game()
         self.__set_game_menu_buttons()
         self.__game_loop()
-
-    def __load_prev_game(self):
-        pg = self.__prev_game
-
-        if len(pg) > 0:
-            self.__player1 = pg["player1"]
-            self.__player2 = pg["player2"]
-            self.__lLim = pg["lLim"]
-            self.__rLim =pg["rLim"]
-            self.__blLim = pg["blLim"]
-            self.__brLim = pg["brLim"]
-            self.__lRender = pg["lRender"]
-            self.__dRender = pg["dRender"]
-            self.__upLimit = pg["upLimit"]
-            self.__player_turn = pg["playerTurn"]
-            self.__first_try = pg["first_try"]
-            self.__board = pg["board"]
-            self.__id = pg["id"]
-
-            for coin in pg["coins"]:
-                if coin[0]["type"] == True:
-                    current_coin = Sprite(self.__coin_b, coin[0]["x"], coin[0]["y"], coin[0]["x_change"], coin[0]["y_change"], desc="b")
-                else:
-                    current_coin = Sprite(self.__coin_a, coin[0]["x"], coin[0]["y"], coin[0]["x_change"], coin[0]["y_change"], desc="a")
-
-                self.__coins.append([current_coin, coin[1], coin[2]])
-
-    def __save_current_game(self):
-        saved_games = eval(read(SAVED_GAMES))
-
-        new_game = {
-                "player1": self.__player2,
-                "player2": self.__player1,
-                "lLim": self.__lLim,
-                "rLim": self.__rLim,
-                "blLim": self.__blLim,
-                "brLim": self.__brLim,
-                "lRender": self.__lRender,
-                "dRender": self.__dRender,
-                "upLimit": self.__upLimit,
-                "playerTurn": self.__player_turn,
-                "first_try": self.__first_try,
-                "board": self.__board,
-                "id": self.__id,
-                "coins":[]
-        }
-            
-        for coin in self.__coins:
-            current_coin = [
-                {
-                    "type":True, 
-                    "x":coin[0].x, 
-                    "y":coin[0].y,
-                    "x_change":coin[0].x_change,
-                    "y_change":coin[0].y_change
-                }, coin[1], coin[2]]
-
-            if coin[0].desc == "a":
-                current_coin[0]["type"] = False
-            else:
-                current_coin[0]["type"] = True
-                
-            new_game["coins"].append(current_coin)
-
-        if self.__isIa:
-            mode = "PV1"
-        else:
-            mode = "PVP"
-        
-        if len(self.__prev_game) != 0:
-            update_game_by_id(mode, saved_games, new_game, self.__id)
-        else:
-            saved_games[mode].append(new_game)
-            save(SAVED_GAMES, str(saved_games))
 
     # E: Una referencia a un evento de Pygame
     # S: N/A
@@ -173,8 +102,15 @@ class Game:
             
             render_game_menu_buttons(self.__game_menu_buttons, self.__screen)
             render_menu_text(self.__pygame, self.__screen)
+
             self.__screen.blit(self.__keys_img, (25 ,260))
+            self.__screen.blit(self.__turn_text, (25, 400))
             
+            if self.__player_turn:
+                self.__screen.blit(self.__p1_turn_text, (25, 450))
+            else:
+                self.__screen.blit(self.__p2_turn_text, (25, 450))
+
             if self.__winner != 0:
                 if not self.__winner_loop_passed and self.__winner == 1:
                     update_scores(self.__player1)
@@ -348,3 +284,77 @@ class Game:
             self.__board = add_n_board_cols(self.__board, right_excess, False) 
 
             self.__brLim += right_excess
+
+    def __load_prev_game(self):
+        pg = self.__prev_game
+
+        if len(pg) > 0:
+            self.__player1 = pg["player1"]
+            self.__player2 = pg["player2"]
+            self.__lLim = pg["lLim"]
+            self.__rLim =pg["rLim"]
+            self.__blLim = pg["blLim"]
+            self.__brLim = pg["brLim"]
+            self.__lRender = pg["lRender"]
+            self.__dRender = pg["dRender"]
+            self.__upLimit = pg["upLimit"]
+            self.__player_turn = pg["playerTurn"]
+            self.__first_try = pg["first_try"]
+            self.__board = pg["board"]
+            self.__id = pg["id"]
+
+            for coin in pg["coins"]:
+                if coin[0]["type"] == True:
+                    current_coin = Sprite(self.__coin_b, coin[0]["x"], coin[0]["y"], coin[0]["x_change"], coin[0]["y_change"], desc="b")
+                else:
+                    current_coin = Sprite(self.__coin_a, coin[0]["x"], coin[0]["y"], coin[0]["x_change"], coin[0]["y_change"], desc="a")
+
+                self.__coins.append([current_coin, coin[1], coin[2]])
+
+    def __save_current_game(self):
+        saved_games = eval(read(SAVED_GAMES))
+
+        new_game = {
+                "player1": self.__player2,
+                "player2": self.__player1,
+                "lLim": self.__lLim,
+                "rLim": self.__rLim,
+                "blLim": self.__blLim,
+                "brLim": self.__brLim,
+                "lRender": self.__lRender,
+                "dRender": self.__dRender,
+                "upLimit": self.__upLimit,
+                "playerTurn": self.__player_turn,
+                "first_try": self.__first_try,
+                "board": self.__board,
+                "id": self.__id,
+                "coins":[]
+        }
+            
+        for coin in self.__coins:
+            current_coin = [
+                {
+                    "type":True, 
+                    "x":coin[0].x, 
+                    "y":coin[0].y,
+                    "x_change":coin[0].x_change,
+                    "y_change":coin[0].y_change
+                }, coin[1], coin[2]]
+
+            if coin[0].desc == "a":
+                current_coin[0]["type"] = False
+            else:
+                current_coin[0]["type"] = True
+                
+            new_game["coins"].append(current_coin)
+
+        if self.__isIa:
+            mode = "PV1"
+        else:
+            mode = "PVP"
+        
+        if len(self.__prev_game) != 0:
+            update_game_by_id(mode, saved_games, new_game, self.__id)
+        else:
+            saved_games[mode].append(new_game)
+            save(SAVED_GAMES, str(saved_games))

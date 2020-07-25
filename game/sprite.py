@@ -1,6 +1,6 @@
 class Sprite:
 
-    # E: Referencia a imagen cargada por PyGame, cuatro enteros 
+    # E: Referencia a imagen cargada por PyGame, cuatro enteros
     # S: N/A
     # D: Constructor de la clase
     def __init__(self, img, x, y, x_change, y_change, desc=""):
@@ -12,6 +12,6 @@ class Sprite:
 
         self._img = img
         self.desc = desc
-        
+
     def get_image(self):
         return self._img

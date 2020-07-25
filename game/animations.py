@@ -85,14 +85,17 @@ def render_menu_text(pygame, screen):
     font = pygame.font.Font(GAME_FONT_PATH, 17)
 
     texts = []
-    texts.append(Sprite(font.render("Volver", True, COLOR_WHITE), 42, 45, 0, 0))
-    texts.append(Sprite(font.render("Guardar", True, COLOR_WHITE), 38, 145, 0, 0))
-    texts.append(Sprite(font.render("Teclas", True, COLOR_WHITE), 48, 230, 0, 0))
+    texts.append(
+        Sprite(font.render("Volver", True, COLOR_WHITE), 42, 45, 0, 0))
+    texts.append(
+        Sprite(font.render("Guardar", True, COLOR_WHITE), 38, 145, 0, 0))
+    texts.append(
+        Sprite(font.render("Teclas", True, COLOR_WHITE), 48, 230, 0, 0))
 
     for text in texts:
         screen.blit(text.get_image(), (text.x, text.y))
 
-# E: Una referencia a screen y una lista 
+# E: Una referencia a screen y una lista
 # S: N/A
 # D: Se encarga de renderizar las monedas
 def render_coins(screen, coins):

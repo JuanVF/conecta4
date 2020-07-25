@@ -1,4 +1,4 @@
-import random 
+import random
 
 from conecta4.game.physics import get_pos_last_space
 
@@ -36,7 +36,7 @@ def get_possible_movements(board):
 
                         if case[0] > highest_i[0]:
                             highest_i = case
-        
+
                     pos_wins.append(highest_i)
             except:
                 print(i, j)
@@ -44,7 +44,7 @@ def get_possible_movements(board):
     pos_wins.sort()
 
     return pos_wins[::-1]
-                
+
 
 # E: Una matriz y tres enteros
 # S: Un entero
@@ -87,7 +87,7 @@ def find_line(board, i, j, cod):
                 elif cod == 5:
                     j += 1
                     i -= 1
-                
+
                 # Izquierda
                 if cod == 6 and board[i][j] == board[i-1][j]:
                     nxt += 1
@@ -101,7 +101,7 @@ def find_line(board, i, j, cod):
                 i += 1
             elif cod == 2:
                 i += 1
-            
+
             # Derecha-arriba
             if cod == 3 and board[i][j] == board[i+1][j+1]:
                 nxt += 1
@@ -110,14 +110,14 @@ def find_line(board, i, j, cod):
             elif cod == 3:
                 j += 1
                 i += 1
-            
+
             # Arriba
             if cod == 4 and board[i][j] == board[i][j+1]:
                 nxt += 1
                 j += 1
             elif cod == 4:
                 j += 1
-        
+
             n += 1
-    
+
     return [nxt, [i, j]]

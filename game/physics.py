@@ -9,11 +9,11 @@ def calc_velocity(time_rnow):
 # E: Una matriz y un booleano
 # S: Una matriz
 # D: Agrega una posiion a la matriz
-def add_board_col(board ,left):
+def add_board_col(board, left):
     if left:
-        board.insert(0, [0,0,0,0,0,0])
+        board.insert(0, [0, 0, 0, 0, 0, 0])
     else:
-        board.append([0,0,0,0,0,0])
+        board.append([0, 0, 0, 0, 0, 0])
 
     return board
 
@@ -31,7 +31,7 @@ def add_n_board_cols(board, n, left):
 # D: Dada una posiion y el turno, agrega una nueva moneda
 def add_coin_to_board(board, pos, player_turn):
     coins = get_pos_last_space(board[pos])
-    
+
     if len(board[pos]) == coins:
         for i in range(0, len(board)):
             board[i].append(0)
@@ -55,7 +55,7 @@ def get_highest_coin(board):
 
         if highest < current:
             highest = current
-        
+
     return highest
 
 # E: Un sprite, un entero y una matriz
@@ -79,7 +79,7 @@ def calc_coin_initial_pos(coin, pos):
 def calc_coin_y_lim(col):
     coin_y_distance = 20
     coin_height = 75
-    
+
     pos = get_pos_last_space(col) + 1
 
     lim = 600 - (coin_height + coin_y_distance) * pos
@@ -93,7 +93,7 @@ def get_pos_last_space(col):
     for i in range(0, len(col)):
         if col[i] == 0:
             return i
-    
+
     return len(col)
 
 # E/S: Una lista y un booleano
@@ -148,7 +148,7 @@ def detect_winner(board):
 # D: Retorna True si encuentra ganador
 def detect_lines(board, i, j):
     for code in range(1, 5):
-        case,_ = detect_line(board, code, i, j)
+        case, _ = detect_line(board, code, i, j)
 
         if case:
             return True
@@ -192,7 +192,7 @@ def detect_line(board, cod, i, j):
                 nxt += 1
                 i += 1
                 j -= 1
-            
+
             n += 1
         except:
             n = -1

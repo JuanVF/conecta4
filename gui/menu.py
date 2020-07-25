@@ -1,14 +1,15 @@
 import sys
-import os  
+import os
 
 sys.path.append("..")
 
-from conecta4.constants import *
-from conecta4.game.sprite import Sprite
-from conecta4.utils import *
-from conecta4.gui.options import Options
-from conecta4.gui.scores import Score
 from pygame import mixer
+
+from conecta4.gui.scores import Score
+from conecta4.gui.options import Options
+from conecta4.utils import *
+from conecta4.game.sprite import Sprite
+from conecta4.constants import *
 
 class Menu:
     # E: Una referencia a pygame
@@ -18,7 +19,7 @@ class Menu:
         self.__isRunning = True
         self.__click = False
 
-        #Esta funcion se encarga de centrar la ventana
+        # Esta funcion se encarga de centrar la ventana
         os.environ['SDL_VIDEO_CENTERED'] = '1'
 
         self.__main_clock = pygame.time.Clock()
@@ -26,17 +27,17 @@ class Menu:
         icon = pygame.image.load(GAME_LOGO_PATH)
 
         mixer.music.load(GAME_BACKGROUND_MUSIC)
-        mixer.music.set_volume(0.0)
+        mixer.music.set_volume(0.15)
         mixer.music.play(-1)
 
         self.__background = pygame.image.load(MENU_BACKGROUND_PATH)
-        
+
         self.__screen = pygame.display.set_mode(MENU_WINDOW_SIZE)
 
         self.__pygame = pygame
         self.__pygame.display.set_caption("4 en linea")
         self.__pygame.display.set_icon(icon)
-    
+
     # E/S: N/A
     # D: Inicia el juego y determina ciertos parametros iniciales
     def start_game(self):
@@ -68,7 +69,6 @@ class Menu:
                 self.__close_menu(event)
                 self.__click = detect_click(self.__pygame, event)
 
-
             self.__pygame.display.update()
             self.__main_clock.tick(60)
 
@@ -87,7 +87,7 @@ class Menu:
     def __set_background(self):
 
         self.__screen.fill((16, 15, 15))
-        self.__screen.blit(self.__background, (300,0))
+        self.__screen.blit(self.__background, (300, 0))
 
     # E/S: N/A
     # D: Se encarga de asignar los datos inciales del Sprite de los detalles del fondo
@@ -95,8 +95,10 @@ class Menu:
 
         background_detail = self.__pygame.image.load(MENU_BG_DETAILS_PATH)
 
-        bg_detail1 = Sprite(background_detail, -245, 0, MENU_BG_DETAILS_SPEED, 0)
-        bg_detail2 = Sprite(background_detail, 940, 0, MENU_BG_DETAILS_SPEED, 0)
+        bg_detail1 = Sprite(background_detail, -245, 0,
+                            MENU_BG_DETAILS_SPEED, 0)
+        bg_detail2 = Sprite(background_detail, 940, 0,
+                            MENU_BG_DETAILS_SPEED, 0)
 
         self.__bg_details = [bg_detail1, bg_detail2]
 
@@ -112,7 +114,7 @@ class Menu:
 
         elif x < -255:
             x_change = MENU_BG_DETAILS_SPEED
-        
+
         for i in range(0, len(self.__bg_details)):
             self.__bg_details[i].x_change = x_change
             self.__bg_details[i].x += x_change
@@ -122,7 +124,7 @@ class Menu:
             x = self.__bg_details[i].x
             y = self.__bg_details[i].y
 
-            self.__screen.blit(img, (x,y))
+            self.__screen.blit(img, (x, y))
 
     # E/S: N/A
     # D: Se encarga de dibujar la base para la animacion 2
@@ -135,30 +137,33 @@ class Menu:
         rects.append(self.__pygame.Rect((0, 300, 1000, 2)))
         rects.append(self.__pygame.Rect((500, 300, 2, 600)))
 
-        y1 =  300
+        y1 = 300
         y2 = 600
         x1 = 450
         x2 = 550
 
         while x1 != 0:
-            lines.append([(x1,y1),(retro_menu_rect(x1),y2)])
-            blue_lines.append([(x1+2,y1),(retro_menu_rect(x1+2),y2)])
-            red_lines.append([(x1-2,y1),(retro_menu_rect(x1-2),y2)])
+            lines.append([(x1, y1), (retro_menu_rect(x1), y2)])
+            blue_lines.append([(x1+2, y1), (retro_menu_rect(x1+2), y2)])
+            red_lines.append([(x1-2, y1), (retro_menu_rect(x1-2), y2)])
 
-            lines.append([(x2,y1),(retro_menu_rect(x2),y2)])
-            blue_lines.append([(x2+2,y1),(retro_menu_rect(x2+2),y2)])
-            red_lines.append([(x2-2,y1),(retro_menu_rect(x2-2),y2)])
+            lines.append([(x2, y1), (retro_menu_rect(x2), y2)])
+            blue_lines.append([(x2+2, y1), (retro_menu_rect(x2+2), y2)])
+            red_lines.append([(x2-2, y1), (retro_menu_rect(x2-2), y2)])
 
-            x1-=50
-            x2+=50
+            x1 -= 50
+            x2 += 50
 
         for rect in rects:
             self.__pygame.draw.rect(self.__screen, COLOR_WHITE, rect)
 
         for i in range(0, len(blue_lines)):
-            self.__pygame.draw.line(self.__screen, COLOR_BLUE, blue_lines[i][0], blue_lines[i][1], 2)
-            self.__pygame.draw.line(self.__screen, COLOR_RED, red_lines[i][0], red_lines[i][1], 2)
-            self.__pygame.draw.line(self.__screen, COLOR_WHITE, lines[i][0], lines[i][1], 2)
+            self.__pygame.draw.line(
+                self.__screen, COLOR_BLUE, blue_lines[i][0], blue_lines[i][1], 2)
+            self.__pygame.draw.line(
+                self.__screen, COLOR_RED, red_lines[i][0], red_lines[i][1], 2)
+            self.__pygame.draw.line(
+                self.__screen, COLOR_WHITE, lines[i][0], lines[i][1], 2)
 
     # E/S: N/A
     # D: Se encarga de asignar los datos inciales de la animacion de fondo
@@ -170,7 +175,6 @@ class Menu:
             rect = Sprite(None, 0, y, 0, 1)
             bg_rects.append(rect)
             y += 60
-            
 
         self.__bg_rects = bg_rects
 
@@ -182,15 +186,16 @@ class Menu:
         if line.y > 600:
             self.__bg_rects = []
             self.__set_background_animation_2()
-        
+
         for i in range(0, 5):
             self.__bg_rects[i].y += self.__bg_rects[i].y_change
-            rect = self.__pygame.Rect((self.__bg_rects[i].x, self.__bg_rects[i].y, 1000, 2))
+            rect = self.__pygame.Rect(
+                (self.__bg_rects[i].x, self.__bg_rects[i].y, 1000, 2))
             self.__pygame.draw.rect(self.__screen, COLOR_WHITE, rect)
-
 
     # E/S: N/A
     # D: Se encarga de asignar los datos inciales del Sprite de los detalles del fondo
+
     def __set_menu_buttons(self):
         buttons = []
         button_img = self.__pygame.image.load(BUTTON_XL_IMG_PATH)
@@ -216,10 +221,14 @@ class Menu:
 
         texts = []
 
-        texts.append(Sprite(font.render("1 vs 1", True, COLOR_WHITE), 455, 175, 0, 0))
-        texts.append(Sprite(font.render("1 vs PC", True, COLOR_WHITE), 440, 255, 0, 0))
-        texts.append(Sprite(font.render("Puntajes", True, COLOR_WHITE), 425, 333, 0, 0))
-        texts.append(Sprite(font.render("Salir", True, COLOR_WHITE), 450, 410, 0, 0))
+        texts.append(
+            Sprite(font.render("1 vs 1", True, COLOR_WHITE), 455, 175, 0, 0))
+        texts.append(
+            Sprite(font.render("1 vs PC", True, COLOR_WHITE), 440, 255, 0, 0))
+        texts.append(
+            Sprite(font.render("Puntajes", True, COLOR_WHITE), 425, 333, 0, 0))
+        texts.append(
+            Sprite(font.render("Salir", True, COLOR_WHITE), 450, 410, 0, 0))
 
         for text in texts:
             self.__screen.blit(text.get_image(), (text.x, text.y))
@@ -235,21 +244,23 @@ class Menu:
                 play_sound_effect(self.__pygame, GAME_BUTTON_PRESSED, 1)
 
                 if i == 0:
-                    opts = Options(self.__pygame, self.__screen, self.__main_clock, False)
+                    opts = Options(self.__pygame, self.__screen,
+                                   self.__main_clock, False)
 
                     opts.start_options()
 
                 elif i == 1:
-                    opts = Options(self.__pygame, self.__screen, self.__main_clock, True)
-                    
+                    opts = Options(self.__pygame, self.__screen,
+                                   self.__main_clock, True)
+
                     opts.start_options()
 
                 elif i == 2:
-                    score = Score(self.__pygame, self.__screen, self.__main_clock)
+                    score = Score(self.__pygame, self.__screen,
+                                  self.__main_clock)
 
                     score.open_scores()
-                
+
                 elif i == 3:
                     self.__pygame.quit()
                     sys.exit()
-
