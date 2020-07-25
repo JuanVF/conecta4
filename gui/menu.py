@@ -6,7 +6,6 @@ sys.path.append("..")
 from conecta4.constants import *
 from conecta4.game.sprite import Sprite
 from conecta4.utils import *
-from conecta4.gui.game import Game
 from conecta4.gui.options import Options
 from pygame import mixer
 

@@ -9,6 +9,7 @@ from conecta4.utils import *
 from conecta4.game.animations import *
 from conecta4.game.physics import *
 from conecta4.game.pc import *
+from conecta4.events.game_events import * 
 
 class Game:
     
@@ -19,9 +20,13 @@ class Game:
         self.__player1 = player1
         if isIA:
             self.__player2 = "PC"
+            self.__id = get_latest_id("PV1")
         else:
             self.__player2 = player2
+            self.__id = get_latest_id("PVP")
+
         self.__isIa = isIA
+        self.__prev_game = prev_game
 
         self.__game_running = True
         self.__winner = 0
@@ -54,8 +59,91 @@ class Game:
     # E/S: N/A
     # D: Se encarga de iniciar el juego
     def start_game_mode(self):
+        self.__load_prev_game()
         self.__set_game_menu_buttons()
         self.__game_loop()
+
+    def __load_prev_game(self):
+        pg = self.__prev_game
+
+        if len(pg) > 0:
+            self.__player1 = pg["player1"]
+            self.__player2 = pg["player2"]
+            self.__lLim = pg["lLim"]
+            self.__rLim =pg["rLim"]
+            self.__blLim = pg["blLim"]
+            self.__brLim = pg["brLim"]
+            self.__lRender = pg["lRender"]
+            self.__dRender = pg["dRender"]
+            self.__upLimit = pg["upLimit"]
+            self.__player_turn = pg["playerTurn"]
+            self.__first_try = pg["first_try"]
+            self.__board = pg["board"]
+            self.__id = pg["id"]
+
+            for coin in pg["coins"]:
+                if coin[0]["type"] == True:
+                    current_coin = Sprite(self.__coin_b, coin[0]["x"], coin[0]["y"], coin[0]["x_change"], coin[0]["y_change"], desc="b")
+                else:
+                    current_coin = Sprite(self.__coin_a, coin[0]["x"], coin[0]["y"], coin[0]["x_change"], coin[0]["y_change"], desc="a")
+
+                self.__coins.append([current_coin, coin[1], coin[2]])
+
+    def __save_current_game(self):
+        saved_games = eval(read(SAVED_GAMES))
+
+        new_game = {
+                "player1": self.__player2,
+                "player2": self.__player1,
+                "lLim": self.__lLim,
+                "rLim": self.__rLim,
+                "blLim": self.__blLim,
+                "brLim": self.__brLim,
+                "lRender": self.__lRender,
+                "dRender": self.__dRender,
+                "upLimit": self.__upLimit,
+                "playerTurn": self.__player_turn,
+                "first_try": self.__first_try,
+                "board": self.__board,
+                "id": self.__id,
+                "coins":[]
+        }
+            
+        for coin in self.__coins:
+            current_coin = [
+                {
+                    "type":True, 
+                    "x":coin[0].x, 
+                    "y":coin[0].y,
+                    "x_change":coin[0].x_change,
+                    "y_change":coin[0].y_change
+                }, coin[1], coin[2]]
+
+            if coin[0].desc == "a":
+                current_coin[0]["type"] = False
+            else:
+                current_coin[0]["type"] = True
+                
+            new_game["coins"].append(current_coin)
+
+        if self.__isIa:
+            mode = "PV1"
+        else:
+            mode = "PVP"
+        
+        if len(self.__prev_game) != 0:
+            update_game_by_id(mode, saved_games, new_game, self.__id)
+        else:
+            saved_games[mode].append(new_game)
+            save(SAVED_GAMES, str(saved_games))
+
+    # E: Una referencia a un evento de Pygame
+    # S: N/A
+    # D: Dado un evento, cierra el juego si se oprime el boton de salir
+    def __close_menu(self, event):
+        if event.type == self.__pygame.QUIT:
+            self.__pygame.quit()
+            sys.exit()
 
     # E/S: N/A
     # D: Loop del juego
@@ -77,7 +165,7 @@ class Game:
 
                 if self.__winner == 0:
                     self.__detect_game_events(event)
-            
+
             self.__button_events()
 
             render_coins(self.__screen, self.__coins)
@@ -105,20 +193,6 @@ class Game:
 
         self.__game_menu_buttons = buttons
 
-    # E: Una referencia a un evento de Pygame
-    # S: N/A
-    # D: Dado un evento, cierra el juego si se oprime el boton de salir
-    def __close_menu(self, event):
-        if event.type == self.__pygame.QUIT:
-            self.__pygame.quit()
-            sys.exit()
-
-    # E/S: N/A
-    # D: Asigna el fondo
-    def __set_background(self):
-        self.__screen.fill((0, 0, 0))
-        self.__screen.blit(self.__background, (200,0))
-
     # E/S: N/A
     # D: Detecta que boton se presiono para redirigir a otro menu
     def __button_events(self):
@@ -133,7 +207,13 @@ class Game:
                     self.__game_running = False
 
                 elif i == 1:
-                    pass
+                    self.__save_current_game()
+
+    # E/S: N/A
+    # D: Asigna el fondo
+    def __set_background(self):
+        self.__screen.fill((0, 0, 0))
+        self.__screen.blit(self.__background, (200,0))
     
     # E: Una referencia a un evento de Pygame
     # S: N/A
@@ -206,9 +286,9 @@ class Game:
     # D: Se encarga de tirar las monedas
     def __throw_coin(self, pos):
         if self.__player_turn:
-            coin = Sprite(self.__coin_b, 0, 0, 0, 0)
+            coin = Sprite(self.__coin_b, 0, 0, 0, 0, desc="b")
         else:
-            coin = Sprite(self.__coin_a, 0, 0, 0, 0)
+            coin = Sprite(self.__coin_a, 0, 0, 0, 0, desc="a")
 
         coin = calc_coin_initial_pos(coin, (pos - abs(self.__blLim)) - self.__lRender)
 

@@ -23,7 +23,7 @@ class Input:
         self.__is_active = False
         self.__text = ""
         self.__input = Sprite(font, x+30, y+20, 0, 0)
-        self.__cursor = Sprite(None, x+35, y+25, 0, 0)
+        self.__cursor = Sprite(None, x+28, y+25, 0, 0)
         self.__cursor_time = time.time() * 1000.0
         self.__hint = hint
 

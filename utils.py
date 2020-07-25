@@ -1,4 +1,5 @@
 from os import path
+from conecta4.constants import *
 
 # E: Una lista de tuplas
 # S: Un booleano
@@ -73,3 +74,38 @@ def read(path):
         return datos
     except:
         return datos
+
+# E: Un string
+# S: Un entero
+# D: Retorna una id disponible de un modo de juego
+def get_latest_id(mode):
+    saved_games = eval(read(SAVED_GAMES))
+    highest_id = 0
+
+    for game in saved_games[mode]:
+        if game["id"] > highest_id:
+            highest_id = game["id"]
+
+    return highest_id + 1
+
+# E: Un string y un entero
+# S: Un diccionario
+# D: Busca en las partidas un diccionario por su id
+def find_game_by_id(mode, game_id):
+    saved_games = eval(read(SAVED_GAMES))
+
+    for game in saved_games[mode]:
+        if game["id"] == game_id:
+            return game
+        
+    return {}
+
+# E: Un string, dos diccionarios y una id
+# S: Un booleano
+# D: Actualiza una partida por su id
+def update_game_by_id(mode, games, game, id):
+    for i in range(0, len(games[mode])):
+        if games[mode][i]["id"] == id:
+            games[mode][i] = game
+    
+    return save(SAVED_GAMES, str(games))
