@@ -1,4 +1,5 @@
-from os import path
+import sys
+
 from conecta4.constants import *
 
 # E: Una referencia a pygame y un evento de Pygame
@@ -73,8 +74,6 @@ def save(path, string):
 
 # E/S: Un string
 # D: Dada la ubicacion de un archivo, lo lee y retorna sus datos
-
-
 def read(path):
     datos = ""
     try:
@@ -90,8 +89,6 @@ def read(path):
 # E: Un string
 # S: Un entero
 # D: Retorna una id disponible de un modo de juego
-
-
 def get_latest_id(mode):
     saved_games = eval(read(SAVED_GAMES))
     highest_id = 0
@@ -102,11 +99,21 @@ def get_latest_id(mode):
 
     return highest_id + 1
 
+# E: N/A
+# S: Un diccionario
+# D: Retorna las partidas guardadas
+def find_games():
+    saved_games = eval(read(SAVED_GAMES))
+
+    if saved_games != "":
+        print("so?")
+        return saved_games
+
+    return {}
+
 # E: Un string y un entero
 # S: Un diccionario
 # D: Busca en las partidas un diccionario por su id
-
-
 def find_game_by_id(mode, game_id):
     saved_games = eval(read(SAVED_GAMES))
 
@@ -119,8 +126,6 @@ def find_game_by_id(mode, game_id):
 # E: Un string, dos diccionarios y una id
 # S: Un booleano
 # D: Actualiza una partida por su id
-
-
 def update_game_by_id(mode, games, game, game_id):
     for i in range(0, len(games[mode])):
         if games[mode][i]["id"] == game_id:
@@ -131,8 +136,6 @@ def update_game_by_id(mode, games, game, game_id):
 # E: Un entero y un string
 # S: Un booleano
 # D: Borra una partida guardada por su id
-
-
 def delete_game_by_id(game_id, mode):
     saved_games = eval(read(SAVED_GAMES))
     new_games = []
@@ -148,8 +151,6 @@ def delete_game_by_id(game_id, mode):
 # E: N/A
 # S: Una lista
 # D: Retorna todos los scores guardados
-
-
 def find_scores():
     scores = read(SCORE_FILE)
 
@@ -161,8 +162,6 @@ def find_scores():
 # E: Un string
 # S: Un booleano
 # D: Actualiza la tabla de puntajes
-
-
 def update_scores(player):
     scores = find_scores()
     isIn = False
@@ -199,3 +198,36 @@ def get_game_mode(isIa):
     if isIa:
         return "PV1"
     return "PVP"
+
+# E: Un booleano y una lista
+# S: Un entero
+# D: Retorna el largo de las partidas guardadas dado su modo de juego
+def get_mode_length(isIa, saved_games):
+    mode = get_game_mode(isIa)
+
+    return len(saved_games[mode])
+
+# E: Un Input y un booleano
+# S: Un string
+# D: Retorna el nombre del player 2
+def get_p2_name(p2_input, isIa):
+    if not isIa:
+        p2 = p2_input.get_text()
+                
+        if p2.lstrip() == "":
+            return "Player 2"
+
+        return p2
+
+    return "PC"
+
+# E: Un Input
+# S: Un string
+# D: Retorna el nombre del player 1
+def get_p1_name(p1_input):
+    p1 = p1_input.get_text()
+
+    if p1.lstrip() == "":
+        return "Player 1"
+    
+    return p1

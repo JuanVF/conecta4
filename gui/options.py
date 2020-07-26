@@ -1,14 +1,39 @@
 from conecta4.game.sprite import Sprite
+
 from conecta4.utils import *
 from conecta4.constants import *
+
 from conecta4.gui.game import Game
 from conecta4.gui.input import Input
-import sys
-import os
 
+from conecta4.animations.options_animations import *
+
+p1_hint = "Escriba el nombre del jugador 1..."
+
+new_game_pos1 = (720, 272)
+new_game_pos2 = (920, 342)
 
 class Options:
+
+    # E: Una referencia a pygame y screen, y dos booleanos
+    # S: N/A
+    # D: Constructor de la clase
     def __init__(self, pygame, screen, clock, isIa):
+
+        # Recursos multimedia
+        self.__font2 = pygame.font.Font(GAME_FONT2_PATH, 22)
+        self.__font = pygame.font.Font(GAME_FONT_PATH, 22)
+
+        self.__button_img = pygame.image.load(BUTTON_XL_IMG_PATH)
+
+        self.__game_container_img = pygame.image.load(GAME_SAVE_CONTAINER)
+        self.__button_move_left = Sprite(pygame.image.load(GAME_MOVE_LEFT), 0, 400, 0, 0)
+        self.__button_move_right = Sprite(pygame.image.load(GAME_MOVE_RIGHT), 930, 400, 0, 0)
+
+        self.__back_button = Sprite(pygame.image.load(GAME_BACK_BUTTON), 10, 10, 0, 0)
+
+        # Variables iniciales
+        self.__mode = get_game_mode(isIa)
         self.__pygame = pygame
         self.__clock = clock
         self.__screen = screen
@@ -17,232 +42,141 @@ class Options:
         self.__running = True
         self.__click = False
 
-        self.__font2 = pygame.font.Font(GAME_FONT2_PATH, 22)
-        self.__font = pygame.font.Font(GAME_FONT_PATH, 22)
+        self.__input_p1_title = self.__font2.render("Jugador 1", True, COLOR_WHITE)
+        self.__input_p2_title = self.__font2.render("Jugador 2", True, COLOR_WHITE)
 
-        self.__input_p1_txt = self.__font2.render(
-            "Jugador 1", True, COLOR_WHITE)
-        self.__input_p2_txt = self.__font2.render(
-            "Jugador 2", True, COLOR_WHITE)
+        self.__back_button_title = self.__font.render("Volver", True, COLOR_WHITE)
 
-        self.__back_button_txt = self.__font.render(
-            "Volver", True, COLOR_WHITE)
-
-        self.__button_img = pygame.image.load(BUTTON_XL_IMG_PATH)
-        self.__play_button_txt = self.__font.render("Jugar", True, COLOR_WHITE)
-
-        self.__saved_games = {}
-        self.__game_container_img = pygame.image.load(GAME_SAVE_CONTAINER)
-
-        self.__game_move_left = Sprite(
-            pygame.image.load(GAME_MOVE_LEFT), 0, 400, 0, 0)
-        self.__game_move_right = Sprite(
-            pygame.image.load(GAME_MOVE_RIGHT), 930, 400, 0, 0)
+        self.__play_button_title = self.__font.render("Jugar", True, COLOR_WHITE)
 
         self.__game_container_x_move = 0
 
-        self.__back_button = Sprite(
-            pygame.image.load(GAME_BACK_BUTTON), 10, 10, 0, 0)
+        self.__input_p1 = Input(pygame, screen, 20, 130, p1_hint)
 
+        self.__input_p2 = set_input_p2(pygame, screen, isIa)
+
+        self.__load_games()
+
+    # E/S: N/A
+    # D: Inicia el menu de opciones
     def start_options(self):
-        self.__input_p1 = Input(
-            self.__pygame, self.__screen, 20, 130, "Escriba el nombre del jugador 1...")
-
-        if not self.__isIa:
-            self.__input_p2 = Input(
-                self.__pygame, self.__screen, 20, 260, "Escriba el nombre del jugador 2...")
-
-        self.__load_saved_games()
-
         self.__loop()
 
+    # E/S: N/A
+    # D: Loop de la clase
     def __loop(self):
         while self.__running:
             self.__screen.fill((0, 0, 0))
-
-            self.__screen.blit(self.__input_p1_txt, (40, 80))
-            self.__screen.blit(self.__back_button_txt, (100, 25))
-            self.__screen.blit(self.__back_button.get_image(
-            ), (self.__back_button.x, self.__back_button.y))
-            self.__screen.blit(self.__button_img, (720, 272))
-            self.__screen.blit(self.__play_button_txt, (762, 295))
-
-            self.__input_p1.render()
-            if not self.__isIa:
-                self.__screen.blit(self.__input_p2_txt, (40, 210))
-                self.__input_p2.render()
-
-            self.__render_saved_games()
-
-            self.__screen.blit(self.__game_move_left.get_image(
-            ), (self.__game_move_left.x, self.__game_move_left.y))
-            self.__screen.blit(self.__game_move_right.get_image(
-            ), (self.__game_move_right.x, self.__game_move_right.y))
+            
+            render_buttons(self.__screen, self.__back_button_title, self.__back_button, self.__button_img, self.__play_button_title)
+            render_input_title(self.__screen, self.__isIa, self.__input_p1_title, self.__input_p2_title)
+            render_inputs(self.__screen, self.__isIa, self.__input_p1, self.__input_p2)
+            render_saved_games(self.__screen, self.__game_container_x_move, self.__p1s, self.__p2s, self.__vs, self.__game_container_img)
+            
+            self.__screen.blit(self.__button_move_left.get_image(), (self.__button_move_left.x, self.__button_move_left.y))
+            self.__screen.blit(self.__button_move_right.get_image(), (self.__button_move_right.x, self.__button_move_right.y))
 
             self.__click = False
 
             for event in self.__pygame.event.get():
-                self.__close_menu(event)
-                self.__click = detect_click(self.__pygame, event)
-
-                self.__input_p1.detect_events(event, self.__click)
-
-                if not self.__isIa:
-                    self.__input_p2.detect_events(event, self.__click)
-
-                self.__back_button_click(self.__click)
-
-                self.__move_left_saved_games()
-                self.__move_right_saved_games()
-                self.__detect_saved_game_click()
-                self.__new_game_event()
+                self.__loop_events(event)
 
             self.__pygame.display.update()
             self.__clock.tick(60)
 
-    def __new_game_event(self):
+    # E: Un evento de pygame
+    # S: N/A
+    # D: Detecta los eventos del juego
+    def __loop_events(self, event):
+        close_menu(self.__pygame, event)
+        self.__click = detect_click(self.__pygame, event)
+
+        self.__input_p1.detect_events(event, self.__click)
+
+        if not self.__isIa:
+            self.__input_p2.detect_events(event, self.__click)
+
+        self.__back_button_click(self.__click)
+
+        self.__list_events()
+        self.__start_game()
+
+    # E/S: N/A
+    # D: Detecta los eventos para mover la lista
+    def __list_events(self):
+        if self.__click:
+            length = get_mode_length(self.__isIa, self.__saved_games) * -90
+            r_pressed = is_sprite_pressed(self.__pygame, self.__button_move_right, x=70, y=150)
+            l_pressed = is_sprite_pressed(self.__pygame, self.__button_move_left, x=70, y=150)
+
+            self.__game_container_x_move = move_list_to_right(self.__game_container_x_move, length, r_pressed)
+            self.__game_container_x_move = move_list_to_left(self.__game_container_x_move, l_pressed)
+
+    # E/S: N/A
+    # D: Inicia el juego
+    def __start_game(self):
         mx, my = self.__pygame.mouse.get_pos()
-        pos1 = (720, 272)
-        pos2 = (920, 342)
-        pos3 = (mx, my)
+        mouse_pos = (mx, my)
 
-        if self.__click and is_overlap(pos1, pos2, pos3):
-            p1 = self.__input_p1.get_text()
+        new_game_pressed = is_overlap(new_game_pos1, new_game_pos2, mouse_pos)
 
-            if p1.lstrip() == "":
-                p1 = "Player 1"
+        if self.__click and new_game_pressed:
+            self.__new_game_event({})
 
-            if not self.__isIa:
-                p2 = self.__input_p2.get_text()
-                
-                if p2.lstrip() == "":
-                    p2 = "Player 2"
-            else:
-                p2 = "PC"
+        elif self.__click:
+            game = self.__detect_saved_game_click(mouse_pos)
 
-            game = Game(self.__pygame, self.__screen,
-                        self.__clock, p1, p2, self.__isIa)
+            if len(game) != 0:
+                self.__new_game_event(game)
 
-            play_sound_effect(self.__pygame, GAME_BUTTON_PRESSED, 1)
-            game.start_game_mode()
+    # E: Un diccionario
+    # S: N/A
+    # D: Inicia un nuevo juego
+    def __new_game_event(self, prev_game):
+        p1 = get_p1_name(self.__input_p1)
+        p2 = get_p2_name(self.__input_p2, self.__isIa)
 
-            self.__load_saved_games()
+        game = Game(self.__pygame, self.__screen, self.__clock, p1, p2, self.__isIa, prev_game=prev_game)
 
-    def __load_saved_games(self):
-        saved_games = eval(read(SAVED_GAMES))
+        play_sound_effect(self.__pygame, GAME_BUTTON_PRESSED, 1)
+        game.start_game_mode()
 
-        if saved_games != "":
-            self.__saved_games = saved_games
-
-    def __move_left_saved_games(self):
-        pressed = is_sprite_pressed(
-            self.__pygame, self.__game_move_left, x=70, y=150)
-
-        if self.__click and pressed and self.__game_container_x_move < 0:
-            self.__game_container_x_move += 70
-
-    def __move_right_saved_games(self):
-        length = self.__get_mode_length() * -90
-
-        pressed = is_sprite_pressed(
-            self.__pygame, self.__game_move_right, x=70, y=150)
-
-        if self.__click and pressed and self.__game_container_x_move >= length:
-            self.__game_container_x_move -= 70
-
-    def __render_saved_games(self):
+        self.__load_games()
+    
+    # E: Una tupla
+    # S: Un diccionario
+    # D: Retorna la partida si se detecta un click sobre alguna de ellas
+    def __detect_saved_game_click(self, mouse_pos):
+        mx = mouse_pos[0]
         x_cont = 90
-        length = self.__get_mode_length()
+        y = 400
 
-        mode = "PVP"
+        rest_x = (0 <= mx and mx <= 70) or (930 <= mx and mx <= 1000)
 
-        if self.__isIa:
-            mode = "PV1"
+        length = get_mode_length(self.__isIa, self.__saved_games)
 
         for i in range(0, length):
-            pos = (x_cont + self.__game_container_x_move, 400)
+            pos1 = (x_cont + self.__game_container_x_move, y)
+            pos2 = (x_cont + self.__game_container_x_move + 300, y+150)
 
-            p1 = self.__font2.render(
-                self.__saved_games[mode][i]["player1"], True, COLOR_WHITE)
-            p1_pos = ((30 + x_cont + self.__game_container_x_move, 400))
-
-            p2 = self.__font2.render(
-                self.__saved_games[mode][i]["player2"], True, COLOR_WHITE)
-            p2_pos = ((30 + x_cont + self.__game_container_x_move, 480))
-
-            vs = self.__font2.render("VS", True, (255, 234, 55))
-            vs_pos = ((30 + x_cont + self.__game_container_x_move, 440))
-
-            self.__screen.blit(self.__game_container_img, pos)
-
-            self.__screen.blit(p1, p1_pos)
-            self.__screen.blit(p2, p2_pos)
-            self.__screen.blit(vs, vs_pos)
+            if is_overlap(pos1, pos2, mouse_pos) and not rest_x:
+                return self.__saved_games[self.__mode][i]
 
             x_cont += 320
 
-    def __detect_saved_game_click(self):
-        if self.__click:
-            x_cont = 90
-            y = 400
-            mx, my = self.__pygame.mouse.get_pos()
-            rest_x = (0 <= mx and mx <= 70) or (930 <= mx and mx <= 1000)
-
-            pos3 = (mx, my)
-
-            length = self.__get_mode_length()
-
-            mode = "PVP"
-
-            if self.__isIa:
-                mode = "PV1"
-
-            for i in range(0, length):
-                pos1 = (x_cont + self.__game_container_x_move, y)
-                pos2 = (x_cont + self.__game_container_x_move + 300, y+150)
-
-                if is_overlap(pos1, pos2, pos3) and not rest_x:
-                    p1 = self.__input_p1.get_text()
-                    if not self.__isIa:
-                        p2 = self.__input_p2.get_text()
-                    else:
-                        p2 = ""
-                    game = Game(self.__pygame, self.__screen, self.__clock, p1,
-                                p2, self.__isIa, prev_game=self.__saved_games[mode][i])
-
-                    play_sound_effect(self.__pygame, GAME_BUTTON_PRESSED, 1)
-                    game.start_game_mode()
-
-                    self.__load_saved_games()
-
-                x_cont += 320
-
-    def __get_mode_length(self):
-        mode = "PVP"
-        length = 0
-
-        if self.__isIa:
-            mode = "PV1"
-            length = len(self.__saved_games[mode])
-        else:
-            length = len(self.__saved_games[mode])
-
-        return length
+        return {}
+    
+    # E/S: N/A
+    # D: Carga las partidas guardadas
+    def __load_games(self):
+        self.__saved_games = find_games()
+        self.__p1s, self.__p2s, self.__vs = set_saved_games(self.__isIa, self.__saved_games, self.__font2)
 
     # E: Un booleano
     # S: N/A
     # D: Se encarga de regresar al menu principal
-
     def __back_button_click(self, click):
         if click and is_sprite_pressed(self.__pygame, self.__back_button, x=80, y=60):
             play_sound_effect(self.__pygame, GAME_BUTTON_PRESSED, 1)
 
             self.__running = False
-
-    # E: Una referencia a un evento de Pygame
-    # S: N/A
-    # D: Dado un evento, cierra el juego si se oprime el boton de salir
-    def __close_menu(self, event):
-        if event.type == self.__pygame.QUIT:
-            self.__pygame.quit()
-            sys.exit()
