@@ -1,11 +1,17 @@
 from os import path
 from conecta4.constants import *
 
+# E: Una referencia a pygame y un evento de Pygame
+# S: N/A
+# D: Dado un evento, cierra el juego si se oprime el boton de salir
+def close_menu(pg, event):
+    if event.type == pg.QUIT:
+        pg.quit()
+        sys.exit()
+
 # E: Una lista de tuplas
 # S: Un booleano
 # D: Detecta si hay traslape
-
-
 def is_overlap(pos1, pos2, pos3):
     if pos1[0] <= pos3[0] and pos3[0] <= pos2[0]:
         if pos1[1] <= pos3[1] and pos3[1] <= pos2[1]:
@@ -16,8 +22,6 @@ def is_overlap(pos1, pos2, pos3):
 # E: Una referencia a Pygame, un string y dos enteros
 # S: N/A
 # D: Dado el path de un sonido, lo reproduce
-
-
 def play_sound_effect(pygame, sound_path, chn, volume=0.3):
     pygame.mixer.init()
     sound = pygame.mixer.Sound(sound_path)
@@ -27,8 +31,6 @@ def play_sound_effect(pygame, sound_path, chn, volume=0.3):
 # E: Una referecia a pygame y un Sprite
 # S: Un booleano
 # D: Si el mouse dio click sobre un boton retorna True
-
-
 def is_sprite_pressed(pygame, button, x=200, y=70):
     mx, my = pygame.mouse.get_pos()
 
@@ -54,16 +56,12 @@ def detect_click(pygame, event):
 
 # E/S: Un numero real
 # D: Dado un x retorna su valor en la funcion F(x)=2x-500
-
-
 def retro_menu_rect(x):
-    return (2*x - 500)
+    return 2*x - 500
 
 # E: Dos strings
 # S: Booleano
 # D: Guarda los datos de un string sobre un archivo
-
-
 def save(path, string):
     try:
         file = open(path, 'w')
