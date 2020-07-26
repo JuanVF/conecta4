@@ -73,7 +73,7 @@ def calc_coin_initial_pos(coin, pos):
 
     return coin
 
-# E: Un entero y un vector
+# E: Un vector
 # S: Un entero
 # D: Calcula el limite en y para que una moneda no caiga haia el infinito
 def calc_coin_y_lim(col):
@@ -83,6 +83,8 @@ def calc_coin_y_lim(col):
     pos = get_pos_last_space(col) + 1
 
     lim = 600 - (coin_height + coin_y_distance) * pos
+
+    print(lim)
 
     return lim
 

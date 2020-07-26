@@ -29,7 +29,7 @@ class Menu:
         icon = pygame.image.load(GAME_LOGO_PATH)
 
         mixer.music.load(GAME_BACKGROUND_MUSIC)
-        mixer.music.set_volume(0.0)
+        mixer.music.set_volume(0.10)
         mixer.music.play(-1)
 
         self.__isRunning = True

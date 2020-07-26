@@ -68,10 +68,10 @@ class Game:
             self.__click = False
             self.__winner = detect_winner(self.__current_game["board"])
             
+            self.__game_renders()
+
             for event in self.__pygame.event.get():
                 self.__loop_events(event)
-
-            self.__game_renders()
 
             self.__on_win()
 
@@ -112,6 +112,7 @@ class Game:
         elif index == 1:
             if self.__winner == 0:
                 self.__save_current_game()
+                self.__game_running = False
 
     # E/S: N/A
     # D: Se encarga de realizar todos los renders del juego
@@ -194,7 +195,7 @@ class Game:
             isRRInBoard = blLim <= lRender+7 <= brLim
 
             if event.key == self.__pygame.K_d and isRRInBoard:
-                sself.__current_game["coins"] = move_coins_x_pos(self.__current_game["coins"], True)
+                self.__current_game["coins"] = move_coins_x_pos(self.__current_game["coins"], True)
                 self.__current_game["lRender"] += 1
 
             if event.key == self.__pygame.K_a and isRLInBoard:
@@ -202,7 +203,7 @@ class Game:
                 self.__current_game["lRender"] -= 1
 
             if event.key == self.__pygame.K_w:
-                if self.__current_game["dRender"] + 1 < self.__upLimit:
+                if self.__current_game["dRender"] + 1 < self.__current_game["upLimit"] :
                     self.__current_game["coins"] = move_coins_y_pos(self.__current_game["coins"], True)
                     self.__current_game["dRender"] += 1
 
@@ -257,7 +258,10 @@ class Game:
         coin = get_coin_sprite(player_turn, self.__coin_a, self.__coin_b)
         coin = calc_coin_initial_pos(coin, pos_in_board)
 
+        height = get_pos_last_space(self.__current_game["board"][pos])
         lim = calc_coin_y_lim(self.__current_game["board"][pos])
+
+        lim += self.__current_game["dRender"] * 95
 
         self.__current_game["board"] = add_coin_to_board(board, pos, player_turn)
         now = time.time()
@@ -266,10 +270,10 @@ class Game:
         drop_coin(self.__screen, coin, now, lim)
 
         self.__current_game["playerTurn"] = not player_turn
-        self.__current_game["coins"].append([coin, now, lim ])
+        self.__current_game["coins"].append([coin, now, lim])
         
         self.__modifyCoinLimits(pos - abs(bLim))
-        self.__upLimit = get_highest_coin(self.__current_game["board"])
+        self.__current_game["upLimit"] = get_highest_coin(self.__current_game["board"])
     
     # E: Un entero
     # S: N/A
@@ -310,10 +314,11 @@ class Game:
         pg = self.__prev_game
 
         if len(pg) > 0:
-            self.__current_game = pg
+            self.__current_game = eval(str(pg))
             self.__current_game["coins"] = []
 
             for coin in pg["coins"]:
+                current_coin = []
                 if coin[0]["type"] == True:
                     current_coin = Sprite(self.__coin_b, coin[0]["x"], coin[0]["y"], coin[0]["x_change"], coin[0]["y_change"], desc="b")
                 else:
@@ -325,17 +330,20 @@ class Game:
     # D: Guarda un juego actual
     def __save_current_game(self):
         new_game = self.__current_game
-            
+        
+        coins = []
+
         for coin in self.__current_game["coins"]:
-            print(coin[0])
-            current_coin = [
-                {
+            dic = {
                     "type"    : True, 
                     "x"       : coin[0].x, 
                     "y"       : coin[0].y,
                     "x_change": coin[0].x_change,
                     "y_change": coin[0].y_change
-                }, 
+                }
+
+            current_coin = [
+                eval(str(dic)), 
                 coin[1], 
                 coin[2]
             ]
@@ -345,8 +353,9 @@ class Game:
             else:
                 current_coin[0]["type"] = True
                 
-            new_game["coins"].append(current_coin)
-        
+            coins.append(current_coin)
+
+        new_game["coins"] = coins
         mode = get_game_mode(self.__isIa)
 
         save_current_game(self.__prev_game, new_game, mode)

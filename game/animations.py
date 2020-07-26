@@ -31,6 +31,7 @@ def drop_coin(screen, coin, start_time, lim):
     dif = now - start_time
 
     coin.y_change = calc_velocity(dif)
+    
     coin.y += coin.y_change
 
 # E: Una lista y una referencia a screen

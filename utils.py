@@ -47,8 +47,6 @@ def is_sprite_pressed(pygame, button, x=200, y=70):
 # E: Una referencia a un evento de Pygame
 # S: Un booleano
 # D: Dado un evento, detecta si hay click
-
-
 def detect_click(pygame, event):
     if event.type == pygame.MOUSEBUTTONDOWN:
         if event.button == 1:
@@ -252,3 +250,9 @@ def save_current_game(prev_game, new_game, mode):
     else:
         saved_games[mode].append(new_game)
         save(SAVED_GAMES, str(saved_games))
+
+# E: Dos enteros
+# S: Un booleano
+# D: Retorna true si el eje y de la moneda esta en el render
+def is_coin_on_render(dRender, col_y):
+    return dRender <= col_y <= dRender+6
