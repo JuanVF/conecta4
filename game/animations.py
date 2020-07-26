@@ -4,26 +4,6 @@ from conecta4.constants import *
 
 import time
 
-# E: Una referencia a pygame y screen, y un entero
-# S: N/A
-# D: Se encarga de renderizar los indices en x
-def render_indices(pygame, screen, lRender, dRender):
-    font = pygame.font.Font(GAME_FONT2_PATH, 15)
-    x_dis = 270
-    y_dis = 520
-
-    for i in range(0, 7):
-        txt_x = font.render(str(lRender + i), True, COLOR_WHITE)
-
-        if i < 6:
-            txt_y = font.render(str(dRender + i), True, COLOR_WHITE)
-            screen.blit(txt_y, (220, y_dis))
-
-            y_dis -= 95
-
-        screen.blit(txt_x, (x_dis, 560))
-        x_dis += 110
-
 # E: Una referencia a pygame, screen, un entero y dos strings
 # S: N/A
 # D: Renderiza el texto del ganador

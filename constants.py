@@ -4,6 +4,23 @@
 MENU_WINDOW_SIZE = (1000, 600)
 MENU_BG_DETAILS_SPEED = 0.8
 
+DEFAULT_GAME_STATUS = {
+            "player1"    : "player1",
+            "player2"    : "player2",
+            "lLim"       : 99,
+            "rLim"       : -99,
+            "blLim"      : 0,
+            "brLim"      : 6,
+            "lRender"    : 0,
+            "dRender"    : 0,
+            "upLimit"    : 0,
+            "playerTurn" : False,
+            "first_try"  : True,
+            "board"      : [[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0], [0,0,0,0,0,0]],
+            "id"         : -1,
+            "coins"      : []
+        }
+
 #----------------------------
 # COLOUR
 #----------------------------

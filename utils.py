@@ -1,6 +1,7 @@
 import sys
 
 from conecta4.constants import *
+from conecta4.game.sprite import Sprite
 
 # E: Una referencia a pygame y un evento de Pygame
 # S: N/A
@@ -106,7 +107,6 @@ def find_games():
     saved_games = eval(read(SAVED_GAMES))
 
     if saved_games != "":
-        print("so?")
         return saved_games
 
     return {}
@@ -231,3 +231,24 @@ def get_p1_name(p1_input):
         return "Player 1"
     
     return p1
+
+# E: Un booleano y dos imagenes
+# S: Un sprite
+# D: Retorna el sprite de una moneda dado el turno de un jugador
+def get_coin_sprite(turn, coin_a, coin_b):
+    if turn:
+        return Sprite(coin_b, 0, 0, 0, 0, desc="b")
+    
+    return Sprite(coin_a, 0, 0, 0, 0, desc="a")
+
+# E: Dos diccionarios, un string y un entero
+# S: N/A
+# D: Guarda el juego actual
+def save_current_game(prev_game, new_game, mode):
+    saved_games = eval(read(SAVED_GAMES))
+
+    if len(prev_game) != 0:
+        update_game_by_id(mode, saved_games, new_game, new_game["id"])
+    else:
+        saved_games[mode].append(new_game)
+        save(SAVED_GAMES, str(saved_games))
